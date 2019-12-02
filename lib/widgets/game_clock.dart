@@ -13,37 +13,42 @@ class GameClock extends StatelessWidget {
   Widget build(BuildContext context) {
     AppState appState = Provider.of<AppState>(context);
 
-    return Observer(
-        builder: (_) => RawMaterialButton(
-              onPressed: () {
-                appState.gameTime.isRunning
-                    ? appState.stopClock()
-                    : appState.startClock();
-              },
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    appState.gameTime.isRunning
-                        ? BlinkWidget(
-                            children: <Widget>[
-                              Text(
-                                  StringFormatter.durationInMinutesAndSeconds(
-                                      appState.gameTime.elapsed),
-                                  style: TextStyles.biggerFont)
-                            ],
-                          )
-                        : Text(
+    return Observer(builder: (_) {
+      //this needs to be here to reliable update the screen continuously :-(
+      var updateScreenTicker = appState.updateScreenTicker;
+
+      return RawMaterialButton(
+        onPressed: () {
+          appState.gameTime.isRunning
+              ? appState.stopClock()
+              : appState.startClock();
+        },
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              appState.gameTime.isRunning
+                  ? BlinkWidget(
+                      children: <Widget>[
+                        Text(
                             StringFormatter.durationInMinutesAndSeconds(
                                 appState.gameTime.elapsed),
-                            style: TextStyles.biggerFont),
-                    Text(
-                        "Zum ${appState.gameTime.isRunning ? "Stoppen" : "Starten"} klicken")
-                  ]),
-              shape: new RoundedRectangleBorder(borderRadius:  BorderRadius.circular(10)),
-              constraints: BoxConstraints(minHeight: 80, minWidth: 150),
-              elevation: 2.0,
-              fillColor: appState.gameTime.isRunning ? Colors.red : Colors.green,
-              padding: const EdgeInsets.all(2.0),
-            ));
+                            style: TextStyles.biggerFont)
+                      ],
+                    )
+                  : Text(
+                      StringFormatter.durationInMinutesAndSeconds(
+                          appState.gameTime.elapsed),
+                      style: TextStyles.biggerFont),
+              Text(
+                  "Zum ${appState.gameTime.isRunning ? "Stoppen" : "Starten"} klicken")
+            ]),
+        shape:
+            new RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        constraints: BoxConstraints(minHeight: 80, minWidth: 150),
+        elevation: 2.0,
+        fillColor: appState.gameTime.isRunning ? Colors.red : Colors.green,
+        padding: const EdgeInsets.all(2.0),
+      );
+    });
   }
 }
