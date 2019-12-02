@@ -95,4 +95,14 @@ mixin _$AppState on _AppState, Store {
       _$_AppStateActionController.endAction(_$actionInfo);
     }
   }
+
+  @override
+  void addPlayer(String name) {
+    final _$actionInfo = _$_AppStateActionController.startAction();
+    try {
+      return super.addPlayer(name);
+    } finally {
+      _$_AppStateActionController.endAction(_$actionInfo);
+    }
+  }
 }

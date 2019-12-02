@@ -13,7 +13,7 @@ class InactivePlayerGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     AppState appState = Provider.of<AppState>(context);
     return Observer(
-        builder: (_) =>PlayerGrid.forPlayers(context, appState.playersOffCourt)
+        builder: (_) => PlayerGrid.forPlayers(context, appState.playersOffCourt)
     );
   }
 }

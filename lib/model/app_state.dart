@@ -9,17 +9,7 @@ part 'app_state.g.dart';
 class AppState = _AppState with _$AppState;
 
 abstract class _AppState with Store {
-  static final List<String> playerNames = [
-    "Tim",
-    "Ayoub",
-    "Jonny",
-    "Javi",
-    "Ole",
-    "Collis",
-    "Lorenz",
-    "Martin",
-    "Hans",
-  ];
+  static final List<String> playerNames = [];
 
   @observable
   ObservableList<Player> _players;
@@ -70,6 +60,13 @@ abstract class _AppState with Store {
     _updatePlayersClockState();
     _refreshTimer.cancel();
     updateScreenTicker = 0;
+  }
+
+  @action
+  void addPlayer(String name) {
+    if (!_players.any((player) => player.name.toLowerCase() == name.toLowerCase())) {
+      _players.add(Player(name));
+    }
   }
 
   void _updatePlayersClockState() {

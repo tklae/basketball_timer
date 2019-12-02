@@ -3,6 +3,7 @@ import 'package:basketball_timer/textstyles.dart';
 import 'package:basketball_timer/widgets/active_player_grid.dart';
 import 'package:basketball_timer/widgets/game_clock.dart';
 import 'package:basketball_timer/widgets/inactive_player_grid.dart';
+import 'package:basketball_timer/widgets/input_modal.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -52,30 +53,54 @@ class _TimerPageState extends State<TimerPage> {
           },
         ),
       ]),
-      body: Center(
-        child: Observer(
-            builder: (_) {
-              final int updateCount = appState.updateScreenTicker;
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  _halfCourtDragArea(),
-                  _substituteDragArea(),
-                  Text(
-                    'Spielzeit:',
-                    style: TextStyles.headLine,
-                  ),
-                  GameClock(),
-                ],
-              );
-            }
-        ),
-      ),
-//      floatingActionButton: FloatingActionButton(
-//        onPressed: null,
-//        tooltip: 'Increment',
-//        child: Icon(Icons.add),
+      body:
+//      Center(
+//        child:
+        Observer(builder: (_) {
+          //just retrieving the value to trigger update of the screen
+          //note that it has to be assigned to a variable, otherwise the
+          //clock doesn't update itself :-(
+          var updateScreenTicker = appState
+              .updateScreenTicker;
+          return SingleChildScrollView(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'Auf dem Spielfeld:',
+                style: TextStyles.headLine,
+              ),
+              _halfCourtDragArea(),
+              Text(
+                'Auswechselspieler:',
+                style: TextStyles.headLine,
+              ),
+              if (appState.playersOffCourt.isEmpty && appState.playersOnCourt.isEmpty)
+                Text("Spieler über das '+' hinzufügen"),
+              _substituteDragArea(),
+              Text(
+                'Spielzeit:',
+                style: TextStyles.headLine,
+              ),
+              GameClock(),
+            ],
+          ));
+        }),
 //      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          InputModal.displayDialog(
+            context,
+            title: "Spieler hinzufügen",
+            hintText: "Jordy Michaels",
+            onSuccess: (playerName) => appState.addPlayer(playerName),
+          );
+        },
+        tooltip: 'Spieler hinzufügen',
+        child: Icon(Icons.person_add),
+        backgroundColor: Colors.orangeAccent,
+        elevation: 10, //add a bit more elevation to distinguish it more from the orange blips of the players
+      ),
     );
   }
 
@@ -119,10 +144,6 @@ class _TimerPageState extends State<TimerPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  'Auswechselspieler:',
-                  style: TextStyles.headLine,
-                ),
                 InactivePlayerGrid(),
               ],
             ),
