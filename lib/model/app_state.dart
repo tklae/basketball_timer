@@ -21,10 +21,6 @@ abstract class _AppState with Store {
   int updateScreenTicker; //Used to force update the screen when the clock is ticking
 
   _AppState() {
-    _initialize();
-  }
-
-  _initialize() {
     _players = _generatePlayers(playerNames);
     _gameTime = Stopwatch();
     updateScreenTicker = 0;
@@ -43,7 +39,10 @@ abstract class _AppState with Store {
 
   @action
   void reset() {
-    _initialize();
+    stopClock();
+    _gameTime.reset();
+    _players = _generatePlayers(playerNames);
+    updateScreenTicker = 0;
   }
 
   @action
@@ -81,6 +80,7 @@ abstract class _AppState with Store {
     _players
         .where((player) => player.name.toLowerCase() == name.toLowerCase())
         .forEach((player) => player.isOnCourt = !player.isOnCourt);
+    _updatePlayersClockState();
     //ObservableList does not track changes made via 'where' or 'forEach',
     //therefore we're working around this by manually calling a method that fires
     //an update event
