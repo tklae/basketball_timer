@@ -8,7 +8,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 
 class ActivePlayerGrid extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     AppState appState = Provider.of<AppState>(context);

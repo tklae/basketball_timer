@@ -64,9 +64,27 @@ abstract class _AppState with Store {
 
   @action
   void addPlayer(String name) {
-    if (!_players.any((player) => player.name.toLowerCase() == name.toLowerCase())) {
+    if (!_players
+        .any((player) => player.name.toLowerCase() == name.toLowerCase())) {
       _players.add(Player(name));
     }
+  }
+
+  @action
+  void deletePlayer(String name) {
+    _players.removeWhere(
+        (player) => player.name.toLowerCase() == name.toLowerCase());
+  }
+
+  @action
+  void switchPlayerState(String name) {
+    _players
+        .where((player) => player.name.toLowerCase() == name.toLowerCase())
+        .forEach((player) => player.isOnCourt = !player.isOnCourt);
+    //ObservableList does not track changes made via 'where' or 'forEach',
+    //therefore we're working around this by manually calling a method that fires
+    //an update event
+    _players.length = _players.length;
   }
 
   void _updatePlayersClockState() {

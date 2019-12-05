@@ -108,7 +108,7 @@ class _TimerPageState extends State<TimerPage> {
     return DragTarget<Player>(
       builder: (BuildContext context, List<Player> incoming, List rejected) {
         return Container(
-          constraints: BoxConstraints(minHeight: 200.0),
+          constraints: BoxConstraints(minHeight: 180.0),
           decoration: BoxDecoration(
             image: DecorationImage(
               image: AssetImage("images/halfcourt.png"),
@@ -124,9 +124,10 @@ class _TimerPageState extends State<TimerPage> {
         );
       },
       onWillAccept: (Player data) => !data.isOnCourt,
-      onAccept: (data) {
+      onAccept: (Player data) {
         setState(() {
-          data.isOnCourt = !data.isOnCourt;
+          AppState appState = Provider.of<AppState>(context);
+          appState.switchPlayerState(data.name);
         });
       },
       onLeave: (data) {},
@@ -140,7 +141,7 @@ class _TimerPageState extends State<TimerPage> {
           color: Colors.grey,
           strokeWidth: 1,
           child: Container(
-            constraints: BoxConstraints(minHeight: 220.0),
+            constraints: BoxConstraints(minHeight: 180.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -151,9 +152,10 @@ class _TimerPageState extends State<TimerPage> {
         );
       },
       onWillAccept: (Player data) => data.isOnCourt,
-      onAccept: (data) {
+      onAccept: (Player data) {
         setState(() {
-          data.isOnCourt = !data.isOnCourt;
+          AppState appState = Provider.of<AppState>(context);
+          appState.switchPlayerState(data.name);
         });
       },
       onLeave: (data) {},
