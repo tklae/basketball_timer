@@ -22,11 +22,15 @@ class PlayerGrid {
   }
 
   static List<Container> _buildPlayerList(
-          BuildContext context, List<Player> players) =>
-      List.generate(
-          players.length,
-          (i) =>
-              Container(child: _buildDraggableDragTarget(context, players[i])));
+          BuildContext context, List<Player> players) {
+    List<Player> sortablePlayers = List.of(players);
+    sortablePlayers.sort((player1, player2) =>
+        player2.playingTimeInSeconds.compareTo(player1.playingTimeInSeconds));
+    return List.generate(
+        sortablePlayers.length,
+            (i) =>
+            Container(child: _buildDraggableDragTarget(context, sortablePlayers[i])));
+  }
 
   static Widget _buildDraggableDragTarget(BuildContext context, Player player) {
     return DragTarget<Player>(
@@ -59,29 +63,34 @@ class PlayerGrid {
             _lastTapPosition = details.globalPosition;
           },
           onLongPress: () {
+            AppState appState = Provider.of<AppState>(context);
+            var totalGameTimeInSeconds = appState.gameTime.elapsed.inSeconds;
             showMenu(
               items: <PopupMenuEntry>[
+                PopupMenuItem(
+                    child: Text("${player.playingTimeInPercentOf(totalGameTimeInSeconds)}% Spielzeit")
+                ),
                 PopupMenuItem(
                   child: FlatButton(
                     color: Colors.transparent,
                     child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Icon(
-                            Icons.delete,
-                          ),
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Icon(
+                                Icons.delete,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(1.0),
+                              child: Text(
+                                "Löschen",
+                                style: TextStyle(),
+                              ),
+                            ),
+                          ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(1.0),
-                          child: Text(
-                            "Löschen",
-                            style: TextStyle(),
-                          ),
-                        ),
-                      ],
-                    ),
                     onPressed: () {
                       AppState appState = Provider.of<AppState>(context);
                       appState.deletePlayer(player.name);
@@ -110,7 +119,7 @@ class PlayerGrid {
                 player.name,
                 style: TextStyles.biggerFont,
               ),
-              Text(player.playingTime)
+              Text(player.formattedPlayingTime)
             ]),
         shape: new CircleBorder(),
         constraints: BoxConstraints(minHeight: 60, minWidth: 60),

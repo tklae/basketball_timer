@@ -12,7 +12,8 @@ class Player {
 
   String get name => this._name;
 
-  String get playingTime => StringFormatter.durationInMinutesAndSeconds(_playingTime.elapsed);
+  String get formattedPlayingTime => StringFormatter.durationInMinutesAndSeconds(_playingTime.elapsed);
+  int get playingTimeInSeconds => _playingTime.elapsed.inSeconds;
 
   bool get isOnCourt => this._isOnCourt;
 
@@ -28,5 +29,11 @@ class Player {
 
   void _calculateStopWatchState() {
     isOnCourt && _gameClockRunning ? _playingTime.start() : _playingTime.stop();
+  }
+
+  playingTimeInPercentOf(int totalGameTimeInSeconds) {
+    return (totalGameTimeInSeconds > 0
+        ? playingTimeInSeconds/totalGameTimeInSeconds*100
+        : 0).toStringAsFixed(1);
   }
 }
